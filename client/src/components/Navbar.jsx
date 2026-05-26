@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-export default function Navbar() {
+export default function Navbar({ taskCount = 0 }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -11,22 +11,30 @@ export default function Navbar() {
   };
 
   return (
-    <header className="border-b border-gray-800 bg-gray-950/80 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-        <div>
-          <h1 className="text-lg font-extrabold tracking-tight text-white sm:text-xl">Task Manager</h1>
-          <p className="text-xs text-gray-400">Organize work with drag and drop</p>
+    <header className="sticky top-0 z-50 h-14 bg-background/80 backdrop-blur-xl border-b border-border">
+      <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-6 lg:px-8">
+        <div className="flex items-center">
+          <div className="h-[28px] w-[28px] bg-accent rounded-lg flex items-center justify-center">
+            <span className="text-white font-medium mono text-sm">F</span>
+          </div>
+          <span className="ml-3 font-semibold text-sm text-primary">Flowspace</span>
+          <div className="border-l border-border h-4 mx-3" />
+          <div className="mono bg-surface2 border border-border text-xs text-muted px-2 py-0.5 rounded-full">
+            {taskCount} {taskCount === 1 ? 'task' : 'tasks'}
+          </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="hidden text-right sm:block">
-            <p className="text-sm font-medium text-white">{user?.email}</p>
-            <p className="text-xs text-gray-500">Signed in</p>
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-full flex items-center justify-center font-semibold text-xs text-white" style={{ background: 'linear-gradient(135deg, #7c3aed, #3b82f6)' }}>
+              {user?.email?.[0]?.toUpperCase() || 'U'}
+            </div>
+            <span className="text-xs text-muted hidden sm:block truncate max-w-32">{user?.email}</span>
           </div>
           <button
             type="button"
             onClick={handleLogout}
-            className="rounded-xl border border-gray-800 bg-gray-900 px-4 py-2 text-sm font-semibold text-gray-200 transition hover:border-gray-700 hover:bg-gray-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
+            className="rounded-lg border border-transparent px-3 py-1.5 text-xs text-muted transition-all duration-200 hover:border-border hover:text-red-400 focus:outline-none focus:ring-2 focus:ring-accentLight/50 focus:ring-offset-2 focus:ring-offset-background"
           >
             Logout
           </button>

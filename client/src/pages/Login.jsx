@@ -19,6 +19,7 @@ export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -43,69 +44,100 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-slate-950 via-gray-950 to-slate-950 px-4">
-      <div className="w-full max-w-md rounded-2xl border border-gray-800 bg-gray-900 p-8 shadow-2xl shadow-black/30">
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-extrabold tracking-tight text-white">Task Manager</h1>
-          <p className="mt-2 text-sm text-gray-400">Sign in to manage your tasks</p>
+    <div className="relative flex min-h-screen items-center justify-center bg-background px-4 overflow-hidden">
+      {/* Background gradients/grids */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 40%, rgba(124,58,237,0.08), transparent)' }} />
+      <div className="absolute inset-0 pointer-events-none opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 31px, #3f3f46 31px, #3f3f46 32px), repeating-linear-gradient(90deg, transparent, transparent 31px, #3f3f46 31px, #3f3f46 32px)', backgroundSize: '32px 32px' }} />
+      
+      <div className="gradient-border w-full max-w-sm">
+        <div className="glass w-full rounded-2xl p-8 relative z-10">
+          <div className="mb-8 flex flex-col items-center text-center">
+            <div className="h-10 w-10 bg-accent rounded-xl flex items-center justify-center mb-4">
+              <span className="text-white font-medium mono text-xl">F</span>
+            </div>
+            <h1 className="text-lg font-semibold text-primary">Flowspace</h1>
+            <p className="mt-1 text-[10px] text-muted tracking-widest uppercase font-medium">Your work, in motion.</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="mb-1 block text-[10px] font-semibold uppercase tracking-wide text-muted" htmlFor="email">
+                Email
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                value={form.email}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-border bg-surface2 px-4 py-3 text-sm text-primary transition-all duration-200 placeholder:text-muted focus:border-accentLight focus:outline-none focus:ring-1 focus:ring-accentLight/30 glow-accent"
+                placeholder="you@example.com"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-[10px] font-semibold uppercase tracking-wide text-muted" htmlFor="password">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  minLength="6"
+                  value={form.password}
+                  onChange={handleChange}
+                  className="w-full rounded-xl border border-border bg-surface2 px-4 py-3 pr-10 text-sm text-primary transition-all duration-200 placeholder:text-muted focus:border-accentLight focus:outline-none focus:ring-1 focus:ring-accentLight/30 glow-accent"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-primary transition-colors duration-200"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    {showPassword ? (
+                      <>
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                      </>
+                    ) : (
+                      <>
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </>
+                    )}
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {error ? (
+              <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-400">
+                {error}
+              </p>
+            ) : null}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold text-white transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-70 active:translate-y-0 hover:-translate-y-[1px] hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-accentLight/50 focus:ring-offset-2 focus:ring-offset-background"
+              style={{ background: 'linear-gradient(135deg, #7c3aed, #6d28d9)' }}
+            >
+              {loading ? <Spinner /> : null}
+              {loading ? 'Signing in...' : 'Sign In'}
+            </button>
+          </form>
+
+          <p className="mt-6 text-center text-sm text-muted">
+            No account yet?{' '}
+            <Link to="/register" className="font-medium text-accentLight hover:text-accent transition-colors duration-200">
+              Create one
+            </Link>
+          </p>
         </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-300" htmlFor="email">
-              Email
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              value={form.email}
-              onChange={handleChange}
-              className="w-full rounded-xl border border-gray-800 bg-gray-950 px-4 py-3 text-white outline-none transition placeholder:text-gray-600 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/30"
-              placeholder="you@example.com"
-            />
-          </div>
-
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-300" htmlFor="password">
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              minLength="6"
-              value={form.password}
-              onChange={handleChange}
-              className="w-full rounded-xl border border-gray-800 bg-gray-950 px-4 py-3 text-white outline-none transition placeholder:text-gray-600 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/30"
-              placeholder="••••••••"
-            />
-          </div>
-
-          {error ? (
-            <p className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-300">
-              {error}
-            </p>
-          ) : null}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-violet-600 px-4 py-3 font-semibold text-white transition hover:bg-violet-500 disabled:cursor-not-allowed disabled:opacity-70 focus:outline-none focus:ring-2 focus:ring-violet-400"
-          >
-            {loading ? <Spinner /> : null}
-            {loading ? 'Signing in...' : 'Sign In'}
-          </button>
-        </form>
-
-        <p className="mt-6 text-center text-sm text-gray-400">
-          No account yet?{' '}
-          <Link to="/register" className="font-semibold text-violet-400 hover:text-violet-300">
-            Create one
-          </Link>
-        </p>
       </div>
     </div>
   );

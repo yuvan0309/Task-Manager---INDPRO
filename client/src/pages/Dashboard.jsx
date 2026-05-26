@@ -55,11 +55,11 @@ export default function Dashboard() {
 
       toast.custom(
         (toastState) => (
-          <div className="pointer-events-auto flex items-center gap-3 rounded-2xl border border-gray-800 bg-gray-900 px-4 py-3 text-sm text-gray-200 shadow-xl shadow-black/30">
+          <div className="pointer-events-auto flex items-center justify-between gap-4 rounded-xl border border-border bg-surface p-3 text-sm text-primary shadow-xl shadow-black/40">
             <span>Task deleted</span>
             <button
               type="button"
-              className="rounded-lg bg-violet-600 px-3 py-1.5 font-semibold text-white transition hover:bg-violet-500"
+              className="rounded-lg bg-surface2 px-3 py-1 font-semibold text-primary border border-borderLight transition-all hover:bg-border focus:outline-none"
               onClick={async () => {
                 toast.dismiss(toastState.id);
                 try {
@@ -86,60 +86,75 @@ export default function Dashboard() {
     }
   };
 
+  const dateStr = new Date().toLocaleDateString('en-GB', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+
   return (
-    <div className="min-h-screen bg-slate-950">
-      <Navbar />
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h2 className="text-3xl font-extrabold tracking-tight text-white">Your Board</h2>
-            <p className="mt-1 text-sm text-gray-400">Drag cards between stages to keep work moving.</p>
-          </div>
-          <button
-            type="button"
-            onClick={openCreateModal}
-            className="inline-flex items-center justify-center rounded-xl bg-violet-600 px-4 py-2.5 font-semibold text-white shadow-lg shadow-violet-950/30 transition hover:bg-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-400"
-          >
-            + New Task
-          </button>
-        </div>
+    <div className="relative min-h-screen bg-background">
+      {/* Subtle dot grid pattern behind the board */}
+      <div className="pointer-events-none absolute inset-0 z-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, #27272a 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
 
-        {error ? (
-          <div className="mb-6 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-300">
-            {error}
+      <div className="relative z-10 flex flex-col h-screen">
+        <Navbar taskCount={tasks ? tasks.length : 0} />
+        
+        <main className="flex-1 flex flex-col mx-auto w-full max-w-7xl overflow-hidden">
+          {/* Dashboard Header */}
+          <div className="flex-shrink-0 px-6 pt-6 pb-4 sm:flex sm:items-end sm:justify-between">
+            <div className="mb-4 sm:mb-0">
+              <h2 className="text-2xl font-semibold text-primary">My Board</h2>
+              <p className="mt-1 text-sm text-muted">{dateStr}</p>
+            </div>
+            <button
+              type="button"
+              onClick={openCreateModal}
+              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-white transition-all duration-200 active:translate-y-0 hover:-translate-y-[1px] hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-accentLight/50 focus:ring-offset-2 focus:ring-offset-background"
+              style={{ background: 'linear-gradient(135deg, #7c3aed, #6d28d9)' }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+              New Task
+            </button>
           </div>
-        ) : null}
 
-        {loading ? (
-          <div className="grid gap-5 lg:grid-cols-3">
-            {[0, 1, 2].map((column) => (
-              <div key={column} className="space-y-3 rounded-2xl border border-gray-800 bg-gray-950/80 p-4">
-                <div className="h-7 w-24 rounded bg-gray-800" />
-                <div className="h-4 w-36 rounded bg-gray-800" />
-                <SkeletonCard />
-                <SkeletonCard />
-                <SkeletonCard />
+          {error ? (
+            <div className="mx-6 mb-4 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+              {error}
+            </div>
+          ) : null}
+
+          {/* Board Area */}
+          <div className="flex-1 px-6 pb-6 overflow-x-auto min-h-0">
+            {loading ? (
+              <div className="flex flex-col md:flex-row h-full gap-4 snap-x snap-mandatory">
+                {[0, 1, 2].map((column) => (
+                  <div key={column} className="flex-1 w-full md:min-w-72 md:max-w-sm shrink-0 snap-center bg-surface rounded-2xl border border-border p-4 flex flex-col gap-3 min-h-96">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                         <div className="h-2 w-2 rounded-full shimmer" />
+                         <div className="shimmer h-4 w-24 rounded" />
+                      </div>
+                      <div className="shimmer h-5 w-8 rounded-full" />
+                    </div>
+                    <SkeletonCard />
+                    <SkeletonCard />
+                    <SkeletonCard />
+                  </div>
+                ))}
               </div>
-            ))}
+            ) : (
+              <KanbanBoard
+                tasks={tasks}
+                onEdit={openEditModal}
+                onDelete={handleDelete}
+                onStageChange={updateTask}
+              />
+            )}
           </div>
-        ) : (
-          <KanbanBoard
-            tasks={tasks}
-            onEdit={openEditModal}
-            onDelete={handleDelete}
-            onStageChange={updateTask}
-          />
-        )}
-      </main>
-
-      <button
-        type="button"
-        onClick={openCreateModal}
-        className="fixed bottom-6 right-6 z-40 inline-flex h-14 w-14 items-center justify-center rounded-full bg-violet-600 text-2xl font-bold text-white shadow-xl shadow-violet-950/40 transition hover:bg-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-400"
-        aria-label="Create task"
-      >
-        +
-      </button>
+        </main>
+      </div>
 
       <TaskModal
         isOpen={isModalOpen}

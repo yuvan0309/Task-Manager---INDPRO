@@ -30,7 +30,7 @@ export default function KanbanBoard({ tasks, onEdit, onDelete, onStageChange }) 
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <div className="grid gap-5 lg:grid-cols-3">
+      <div className="flex flex-col md:flex-row h-full gap-4 snap-x snap-mandatory pb-4">
         {stages.map((stage) => {
           const stageTasks = tasks.filter((task) => task.stage === stage);
 
